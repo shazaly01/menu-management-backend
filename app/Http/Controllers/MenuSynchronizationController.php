@@ -147,7 +147,11 @@ class MenuSynchronizationController extends Controller
     public function uploadProductImages(UploadImagesRequest $request): JsonResponse
     {
         // جلب الصور التي تم التحقق من صحتها وأمانها
-        $files = $request->file('images') ?? $request->file('image');
+        $files = $request->file('images') ?? $request->file('images[]') ?? $request->file('image');
+
+    if (!$files) {
+        return response()->json(['message' => 'لم يتم استقبال أي ملفات صور، يرجى التحقق من الحقول'], 422);
+    }
 
         // تحويل الملف المفرد إلى مصفوفة لتوحيد المعالجة بالتكرار (Loop)
         $filesArray = is_array($files) ? $files : [$files];
